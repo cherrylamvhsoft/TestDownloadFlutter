@@ -53,5 +53,23 @@ namespace TestDownloadFlutter.Controllers
             Stream blobStream = blockBlob.OpenReadAsync().Result;
             return File(blobStream, blockBlob.Properties.ContentType, blockBlob.Name);
         }
+
+        public IActionResult DownloadIPA()
+        {
+            CloudBlockBlob blockBlob;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                string blobstorageconnection = "DefaultEndpointsProtocol=https;AccountName=fluttertest;AccountKey=dJEFw6h2sepEblA6/nWRMvm5fGacRQg8Q7wdOSHCzzxwjsvGPNCYvRk1Fob3pblCf8DNXl/k7X/BnFXGF4vF3w==;EndpointSuffix=core.windows.net";
+                CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(blobstorageconnection);
+                CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
+                CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("testcontainer");
+                blockBlob = cloudBlobContainer.GetBlockBlobReference("Runner.ipa");
+                blockBlob.DownloadToStreamAsync(memoryStream);
+            }
+
+            Stream blobStream = blockBlob.OpenReadAsync().Result;
+            return File(blobStream, blockBlob.Properties.ContentType, blockBlob.Name);
+        }
+
     }
 }
